@@ -1,13 +1,8 @@
 import './App.css';
-import { Button } from './components/Button';
+import JobBoard from './components/JobBoard';
 
 function App() {
-    return (
-        <div className="App">
-            <p>Hello World! (And hello Canva!)</p>
-            <Button>button</Button>
-        </div>
-    );
+    return <JobBoard />;
 }
 
 export default App;
