@@ -1,17 +1,21 @@
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import DataTable from './DataTable';
 
-describe('App', () => {
-    it('should render the required DataTable UI elements', () => {
-        render(<App />);
+describe('DataTable', () => {
+    it('should render a line break after the table', () => {
+        render(<DataTable />);
 
-        // Assert line break after the table
         const tableElement = screen.getByRole('table');
         const hrElement = tableElement.nextSibling;
-        expect(hrElement && (hrElement as HTMLElement).tagName).toBe('HR');
 
-        // Assert dropdown exists with correct default and options
+        expect(hrElement && (hrElement as HTMLElement).tagName).toBe('HR');
+    });
+
+    it('should render a dropdown with default value "Show 5" and correct options', () => {
+        render(<DataTable />);
+
         const dropdownElement = screen.getByRole('combobox');
+
         expect(dropdownElement).toBeInTheDocument();
         expect((dropdownElement as HTMLSelectElement).value).toBe('5');
         expect(
@@ -23,18 +27,30 @@ describe('App', () => {
         expect(
             screen.getByRole('option', { name: 'Show 20' })
         ).toBeInTheDocument();
+    });
 
-        // Assert disabled Prev button
+    it('should render a disabled "Prev" button to the right of the dropdown', () => {
+        render(<DataTable />);
+
         const prevButton = screen.getByRole('button', { name: 'Prev' });
+
         expect(prevButton).toBeInTheDocument();
         expect(prevButton).toBeDisabled();
+    });
 
-        // Assert page information text
+    it('should render page information text with variables for current and total pages', () => {
+        render(<DataTable />);
+
         const pageInfo = screen.getByText('Page 1 of 8');
-        expect(pageInfo).toBeInTheDocument();
 
-        // Assert Next button
+        expect(pageInfo).toBeInTheDocument();
+    });
+
+    it('should render a "Next" button to the right of the page information text', () => {
+        render(<DataTable />);
+
         const nextButton = screen.getByRole('button', { name: 'Next' });
+
         expect(nextButton).toBeInTheDocument();
         expect(nextButton).toBeEnabled();
     });
