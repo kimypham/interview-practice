@@ -19,17 +19,24 @@ export function formatUnixTimeToString(unix: number): string {
     });
 }
 
-export async function fetchJobsFromApi(): Promise<Job[]> {
-    const jobStoriesResponse: Response = await fetch(
-        'https://hacker-news.firebaseio.com/v0/jobstories.json'
-    );
-    const jobIds: number[] = await jobStoriesResponse.json();
-    const fetchedJobIds: number[] = jobIds.slice(0, 6);
-    const jobDetailPromises: Promise<Job>[] = fetchedJobIds.map(
-        (jobId: number) =>
-            fetch(
-                `https://hacker-news.firebaseio.com/v0/item/${jobId}.json`
-            ).then((res) => res.json())
-    );
-    return Promise.all(jobDetailPromises);
+export async function fetchJobsFromApi(
+    offset: number = 0,
+    limit: number = 6
+): Promise<Job[]> {
+    try {
+        const jobStoriesResponse: Response = await fetch(
+            'https://hacker-news.firebaseio.com/v0/jobstories.json'
+        );
+        const jobIds: number[] = await jobStoriesResponse.json();
+        const fetchedJobIds: number[] = jobIds.slice(offset, offset + limit);
+        const jobDetailPromises: Promise<Job>[] = fetchedJobIds.map(
+            (jobId: number) =>
+                fetch(
+                    `https://hacker-news.firebaseio.com/v0/item/${jobId}.json`
+                ).then((res) => res.json())
+        );
+        return Promise.all(jobDetailPromises);
+    } catch (error) {
+        return [];
+    }
 }
