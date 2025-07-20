@@ -1,0 +1,48 @@
+---
+alwaysApply: true
+---
+
+# Development Workflow Mandate
+
+## 1. Planning Phase: Outline the Implementation
+
+Before writing any code, your first step is to generate two detailed planning documents.
+
+-   **Action:** Create or update two markdown files: `implementation_plan.md` and `test_case_plan.md`.
+-   **Implementation Plan:** The `implementation_plan.md` must outline the required functions, files and planned changes (excluding unit testing, as this will be done in the test case plan). Note that if function is not needed in the component file, please move it out into a service file named [FileName].service.tsx. If there are common functions used between files, please move them to a common/services.tsx file.
+-   **Test Case Plan:** For each step in the implementation plan, the `test_case_plan.md` must describe the specific unit tests to be written. This should include asserting whether UI elements exist, happy and fail paths, edge cases, and error handling scenarios.
+-   **Granularity:** Each step in both plans must be atomic, corresponding to **only a single file or a single function**.
+-   **Confirmation:** Wait for user's confirmation. Do not proceed until the plan is confirmed.
+
+---
+
+## 2. Test-First Development: Write Unit Tests
+
+After both plans are established, you must write unit tests _before_ writing the corresponding implementation code.
+
+-   **Action:** For each function or file outlined in the plans, create comprehensive unit tests first.
+-   **Naming convention:** All typescript files must have a Jest unit test file associated with it, with the name FileName.test.tsx or FileName.service.test.tsx.
+-   **Test structure:**
+    -   Each unit test file must contain a "describe", which has the same name as the file name.
+    -   If it is unit test file for a service file, the unit test should contain one "describe", with one "describe" per each service function inside it.
+    -   Inside each describe, there should be "it" tests with the test name "should [expected outcome] when [condition happens]". the "when..." part can be omitted if unneeded.
+    -   Within tests, please seperate render actions (only if it takes more than 1 line), any actions taken (eg. firing events), and expected results, with a new line in between each of them.
+-   **Test coding convention**: Mock functions and values as required. Do not attempt to use real values from API calls etc. Use case sensitivive tests (eg. {name: "Example name"} instead of {name: /example name/i}).
+-   **Reference:** Always refer back to both `@implementation_plan.md` and `@test_case_plan.md` to ensure your unit tests cover all planned requirements and specific test scenarios.
+-   **Frameworks:** Please use Jest.
+
+---
+
+## 3. Implementation Phase: Write the Code
+
+With the tests written and failing (as expected), you can now write the implementation code in python.
+
+-   **Action:** Write the actual source code for each function, making sure it passes the unit tests you've already written.
+-   **Code Quality:** The implementation **must be generic and robust**. Do not hard-code values or logic specifically to pass the tests. The code must solve the general problem and handle a variety of inputs, not just the examples defined in the test cases.
+-   **Reference:** Continuously refer to `@implementation_plan.md` to ensure your code aligns with the agreed-upon architecture and logic.
+-   **Completion:** The task is only complete when all unit tests for the feature are passing.
+-   **Coding convention:** For all react code:
+    -   Use TypeScript code with TailwindCSS
+    -   Use explicit type annotations on all constants
+    -   Use full descriptive variable names instead of abbreviations like idsRes or first6
+    -   If function is not needed in the component file, please move it out into a service file named [FileName].service.tsx
