@@ -34,6 +34,23 @@ export default function DataTable({ users = defaultUsers }: DataTableProps) {
         setCurrentPage(1); // Reset to first page when rows per page changes
     };
 
+    const handlePrevPage = (): void => {
+        setCurrentPage((prevPage: number) => Math.max(prevPage - 1, 1));
+    };
+
+    const handleNextPage = (): void => {
+        setCurrentPage((prevPage: number) =>
+            Math.min(prevPage + 1, totalPages)
+        );
+    };
+
+    const isPrevDisabled: boolean =
+        currentPage === 1 || users.length === 0 || users.length <= rowsToShow;
+    const isNextDisabled: boolean =
+        currentPage === totalPages ||
+        users.length === 0 ||
+        users.length <= rowsToShow;
+
     return (
         <div className="p-4">
             <h1 className="text-xl font-bold mb-4">Data Table</h1>
@@ -79,15 +96,20 @@ export default function DataTable({ users = defaultUsers }: DataTableProps) {
                     <option value={20}>Show 20</option>
                 </select>
                 <button
-                    className="border rounded px-4 py-1 bg-gray-200 text-gray-500 cursor-not-allowed"
-                    disabled
+                    className="border rounded px-4 py-1 bg-white hover:bg-gray-100 disabled:bg-gray-200 disabled:text-gray-500"
+                    onClick={handlePrevPage}
+                    disabled={isPrevDisabled}
                 >
                     Prev
                 </button>
                 <span className="mx-2">
                     Page {currentPage} of {totalPages}
                 </span>
-                <button className="border rounded px-4 py-1 bg-white hover:bg-gray-100">
+                <button
+                    className="border rounded px-4 py-1 bg-white hover:bg-gray-100 disabled:bg-gray-200 disabled:text-gray-500"
+                    onClick={handleNextPage}
+                    disabled={isNextDisabled}
+                >
                     Next
                 </button>
             </div>

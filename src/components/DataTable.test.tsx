@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import DataTable from './DataTable';
 
 describe('DataTable', () => {
@@ -130,5 +130,75 @@ describe('DataTable', () => {
         dropdownElement.dispatchEvent(new Event('change', { bubbles: true }));
 
         expect(screen.getByText('Page 1 of 4')).toBeInTheDocument();
+    });
+
+    it('should go to the next page and update displayed users when Next is clicked', () => {
+        render(<DataTable />);
+
+        const nextButton = screen.getByRole('button', { name: 'Next' });
+        const firstRowBefore = screen.getAllByRole('row')[1];
+        const firstCellBefore = firstRowBefore.querySelector('td');
+        expect(firstCellBefore).toHaveTextContent('1');
+
+        fireEvent.click(nextButton);
+
+        const firstRowAfter = screen.getAllByRole('row')[1];
+        const firstCellAfter = firstRowAfter.querySelector('td');
+        expect(firstCellAfter).toHaveTextContent('6');
+    });
+
+    it('should go to the previous page and update displayed users when Prev is clicked', () => {
+        render(<DataTable />);
+
+        const nextButton = screen.getByRole('button', { name: 'Next' });
+        nextButton.click();
+
+        const prevButton = screen.getByRole('button', { name: 'Prev' });
+        prevButton.click();
+
+        const firstRow = screen.getAllByRole('row')[1];
+        expect(firstRow).toHaveTextContent('1');
+    });
+
+    it('should disable Prev button on the first page and Next button on the last page', () => {
+        render(<DataTable />);
+
+        const prevButton = screen.getByRole('button', { name: 'Prev' });
+        const nextButton = screen.getByRole('button', { name: 'Next' });
+
+        expect(prevButton).toBeDisabled();
+        expect(nextButton).toBeEnabled();
+
+        // Go to last page
+        for (let i = 1; i < 8; i++) {
+            fireEvent.click(nextButton);
+        }
+        expect(nextButton).toBeDisabled();
+        expect(prevButton).toBeEnabled();
+    });
+
+    it('should disable both Prev and Next buttons if users array is empty', () => {
+        render(<DataTable users={[]} />);
+
+        const prevButton = screen.getByRole('button', { name: 'Prev' });
+        const nextButton = screen.getByRole('button', { name: 'Next' });
+
+        expect(prevButton).toBeDisabled();
+        expect(nextButton).toBeDisabled();
+        expect(screen.queryAllByRole('row')).toHaveLength(1); // Only header
+    });
+
+    it('should disable both Prev and Next buttons if users are fewer than rowsToShow', () => {
+        const fewUsers = [
+            { id: 1, name: 'A', age: 20, occupation: 'X' },
+            { id: 2, name: 'B', age: 21, occupation: 'Y' },
+        ];
+        render(<DataTable users={fewUsers} />);
+
+        const prevButton = screen.getByRole('button', { name: 'Prev' });
+        const nextButton = screen.getByRole('button', { name: 'Next' });
+
+        expect(prevButton).toBeDisabled();
+        expect(nextButton).toBeDisabled();
     });
 });

@@ -12,3 +12,16 @@
 
 -   Remove all pagination logic from the component.
 -   Import and use `getTotalPages` and `getUsersToDisplay` from the service file.
+
+## Pagination for DataTable Component
+
+**Goal:**
+Enable pagination in the `DataTable` component so that clicking "Next" or "Prev" updates the displayed users, and disables the buttons appropriately.
+
+### Planned Steps (atomic, per file/function):
+
+1. **DataTable.tsx**
+    - Implement the "Next" and "Prev" button click handlers to update the `currentPage` state.
+    - Disable the "Prev" button when on the first page.
+    - Disable the "Next" button when on the last page.
+    - Ensure the correct users are displayed for the current page.
