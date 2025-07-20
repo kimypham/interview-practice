@@ -278,4 +278,50 @@ describe('JobBoard', () => {
         );
         expect(jobCardElements.length).toBe(12);
     });
+
+    it('should show loading message when Load More is clicked and jobs are being fetched', async () => {
+        // Arrange: Make fetchJobsFromApi return a promise that we can control
+        let resolveFetch: (jobs: any[]) => void;
+        const fetchPromise = new Promise<any[]>((resolve) => {
+            resolveFetch = resolve;
+        });
+        (JobBoardService.fetchJobsFromApi as jest.Mock)
+            .mockImplementationOnce(() =>
+                Promise.resolve(
+                    Array.from({ length: 6 }, (_, i) => ({
+                        id: i + 1,
+                        title: `Job Title ${i + 1}`,
+                        by: `poster${i + 1}`,
+                        time: 1700000000 + i + 1,
+                        url: `https://example.com/job${i + 1}`,
+                    }))
+                )
+            )
+            .mockImplementationOnce(() => fetchPromise);
+
+        render(<JobBoard />);
+        // Wait for first batch
+        await screen.findAllByTestId('job-card');
+        // Click Load More
+        const loadMoreButton = await screen.findByRole('button', {
+            name: 'Load more jobs',
+        });
+        await userEvent.click(loadMoreButton);
+        // Assert: Loading message should be visible
+        const loadingElement = await screen.findByText('Loading jobs...');
+        expect(loadingElement).toBeInTheDocument();
+        // Finish loading
+        resolveFetch!(
+            Array.from({ length: 6 }, (_, i) => ({
+                id: i + 7,
+                title: `Job Title ${i + 7}`,
+                by: `poster${i + 7}`,
+                time: 1700000000 + i + 7,
+                url: `https://example.com/job${i + 7}`,
+            }))
+        );
+        await waitFor(() =>
+            expect(screen.queryByText('Loading jobs...')).toBeNull()
+        );
+    });
 });

@@ -99,6 +99,12 @@ const JobBoard: React.FC = () => {
                                 url={job.url}
                             />
                         ))}
+                        {/* Show loading message when loading more jobs (not initial load) */}
+                        {loading && jobs.length > 0 && (
+                            <div className="text-center text-gray-500 my-4">
+                                Loading jobs...
+                            </div>
+                        )}
                         {!allLoaded && !loading && !error && (
                             <LoadMoreButton onClick={handleLoadMore} />
                         )}
