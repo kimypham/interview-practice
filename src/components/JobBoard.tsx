@@ -1,57 +1,69 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+    fetchJobsFromApi,
+    formatUnixTimeToString,
+    Job,
+} from './JobBoard.service';
 import JobCard from './JobCard';
 import LoadMoreButton from './LoadMoreButton';
 
-const mockJobs = [
-    {
-        title: 'Firezone (YC W22) is hiring Elixir and Rust engineers',
-        poster: 'jamilbk',
-        date: '5/12/2023, 5:01:12 AM',
-    },
-    {
-        title: 'RankScience (YC W17) is hiring SDRs with a knack for SEO',
-        poster: 'ryanb',
-        date: '5/12/2023, 1:01:10 AM',
-    },
-    {
-        title: 'OneSignal (YC S11) Is Hiring Engineers',
-        poster: 'gdegli',
-        date: '5/11/2023, 8:00:48 PM',
-    },
-    {
-        title: 'QuestDB (YC S20) Is Hiring a Technical Content Lead',
-        poster: 'nhourcard',
-        date: '5/11/2023, 5:00:10 AM',
-    },
-    {
-        title: 'Aviator (YC S21) is hiring senior engineers to build the DX platform',
-        poster: 'ankitdce',
-        date: '5/11/2023, 1:00:08 AM',
-    },
-    {
-        title: 'Aptible (YC S14) Is Hiring: Security Engineer and Head of Product',
-        poster: 'fancyremarker',
-        date: '5/10/2023, 5:02:06 AM',
-    },
-];
+const JobBoard: React.FC = () => {
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
-const JobBoard: React.FC = () => (
-    <div className="bg-[#f5f3ea] min-h-screen py-8">
-        <div className="max-w-2xl mx-auto">
-            <h1 className="text-orange-500 font-bold text-4xl mb-8">
-                Hacker News Jobs Board
-            </h1>
-            {mockJobs.map((job, idx) => (
-                <JobCard
-                    key={idx}
-                    title={job.title}
-                    poster={job.poster}
-                    date={job.date}
-                />
-            ))}
-            <LoadMoreButton />
+    const fetchJobs = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const jobsData: Job[] = await fetchJobsFromApi();
+            setJobs(jobsData);
+        } catch (err) {
+            setError('Failed to load jobs. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchJobs();
+    }, []);
+
+    return (
+        <div className="bg-[#f5f3ea] min-h-screen py-8">
+            <div className="max-w-2xl mx-auto">
+                <h1 className="text-orange-500 font-bold text-4xl mb-8">
+                    Hacker News Jobs Board
+                </h1>
+                {loading ? (
+                    <div className="text-center text-gray-500">
+                        Loading jobs...
+                    </div>
+                ) : error ? (
+                    <div className="text-center text-red-500">
+                        {error}
+                        <button
+                            className="ml-4 underline text-orange-500"
+                            onClick={fetchJobs}
+                        >
+                            Retry
+                        </button>
+                    </div>
+                ) : (
+                    jobs.map((job) => (
+                        <JobCard
+                            key={job.id}
+                            title={job.title}
+                            poster={job.by}
+                            date={formatUnixTimeToString(job.time)}
+                            url={job.url}
+                        />
+                    ))
+                )}
+                <LoadMoreButton />
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 export default JobBoard;
