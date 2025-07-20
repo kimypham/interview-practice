@@ -1,9 +1,10 @@
 import './App.css';
+import DataTable from './components/DataTable';
 
 function App() {
     return (
-        <div className="App">
-            <p>Hello World! (And hello Canva!)</p>
+        <div>
+            <DataTable />
         </div>
     );
 }

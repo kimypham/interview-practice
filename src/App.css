@@ -1,11 +1,19 @@
-.App {
-    text-align: center;
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+body {
+    font-family: sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+td,
+th {
+    padding: 4px;
+    border-bottom: 1px solid #ddd;
+    text-align: start;
+}
+
+th {
+    vertical-align: top;
 }
