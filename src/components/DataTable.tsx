@@ -1,12 +1,38 @@
 import { useState } from 'react';
-import { users } from '../data/users';
+import { users as defaultUsers } from '../data/users';
+import { getTotalPages, getUsersToDisplay } from './DataTable.service';
 
-export default function DataTable() {
+export type User = {
+    id: number;
+    name: string;
+    age: number;
+    occupation: string;
+};
+
+export type DataTableProps = {
+    users?: User[];
+};
+
+export default function DataTable({ users = defaultUsers }: DataTableProps) {
     // State for dropdown (number of rows to show)
     const [rowsToShow, setRowsToShow] = useState<number>(5);
-    // State for current page (static for now)
-    const currentPage: number = 1;
-    const totalPages: number = 8;
+    // State for current page
+    const [currentPage, setCurrentPage] = useState<number>(1);
+
+    const totalPages: number = getTotalPages(users, rowsToShow);
+    const usersToDisplay: User[] = getUsersToDisplay(
+        users,
+        rowsToShow,
+        currentPage
+    );
+
+    const handleRowsToShowChange = (
+        event: React.ChangeEvent<HTMLSelectElement>
+    ) => {
+        const newRowsToShow: number = Number(event.target.value);
+        setRowsToShow(newRowsToShow);
+        setCurrentPage(1); // Reset to first page when rows per page changes
+    };
 
     return (
         <div className="p-4">
@@ -30,16 +56,14 @@ export default function DataTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    {users
-                        .slice(currentPage - 1, rowsToShow)
-                        .map(({ id, name, age, occupation }) => (
-                            <tr key={id} className="border-b last:border-b-0">
-                                <td className="px-2 py-1">{id}</td>
-                                <td className="px-2 py-1">{name}</td>
-                                <td className="px-2 py-1">{age}</td>
-                                <td className="px-2 py-1">{occupation}</td>
-                            </tr>
-                        ))}
+                    {usersToDisplay.map(({ id, name, age, occupation }) => (
+                        <tr key={id} className="border-b last:border-b-0">
+                            <td className="px-2 py-1">{id}</td>
+                            <td className="px-2 py-1">{name}</td>
+                            <td className="px-2 py-1">{age}</td>
+                            <td className="px-2 py-1">{occupation}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
             <hr className="my-4" />
@@ -47,7 +71,7 @@ export default function DataTable() {
                 <select
                     className="border rounded px-2 py-1 mr-2"
                     value={rowsToShow}
-                    onChange={() => {}}
+                    onChange={handleRowsToShowChange}
                     aria-label="Show rows"
                 >
                     <option value={5}>Show 5</option>
