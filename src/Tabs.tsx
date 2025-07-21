@@ -1,27 +1,54 @@
+import { useState } from 'react';
+import { getTabData, isTabActive, TabItem } from './Tabs.service';
+
 export default function Tabs() {
+    const tabData: TabItem[] = getTabData();
+    const [activeTabId, setActiveTabId] = useState<string>(tabData[0].id);
+
+    const handleTabClick = (tabId: string): void => {
+        setActiveTabId(tabId);
+    };
+
+    const getButtonClassName = (tabId: string): string => {
+        const baseClasses: string =
+            'px-4 py-2 font-medium text-white transition-colors';
+        const activeClasses: string = 'bg-blue-500';
+        const inactiveClasses: string = 'bg-gray-400 hover:bg-gray-500';
+
+        return `${baseClasses} ${
+            isTabActive(tabId, activeTabId) ? activeClasses : inactiveClasses
+        }`;
+    };
+
+    const isParagraphVisible = (tabId: string): boolean => {
+        return isTabActive(tabId, activeTabId);
+    };
+
     return (
         <div>
-            <div>
-                <button>HTML</button>
-                <button>CSS</button>
-                <button>JavaScript</button>
+            <div className="flex space-x-2 mb-4">
+                {tabData.map((tab: TabItem) => (
+                    <button
+                        key={tab.id}
+                        className={getButtonClassName(tab.id)}
+                        onClick={() => handleTabClick(tab.id)}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
             </div>
             <div>
-                <p>
-                    The HyperText Markup Language or HTML is the standard markup
-                    language for documents designed to be displayed in a web
-                    browser.
-                </p>
-                <p>
-                    Cascading Style Sheets is a style sheet language used for
-                    describing the presentation of a document written in a
-                    markup language such as HTML or XML.
-                </p>
-                <p>
-                    JavaScript, often abbreviated as JS, is a programming
-                    language that is one of the core technologies of the World
-                    Wide Web, alongside HTML and CSS.
-                </p>
+                {tabData.map((tab: TabItem) => (
+                    <p
+                        key={tab.id}
+                        id={`${tab.id}-content`}
+                        className={
+                            isParagraphVisible(tab.id) ? 'block' : 'hidden'
+                        }
+                    >
+                        {tab.content}
+                    </p>
+                ))}
             </div>
         </div>
     );
