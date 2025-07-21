@@ -1,11 +1,8 @@
 import './App.css';
+import Tabs from './Tabs';
 
 function App() {
-    return (
-        <div className="App">
-            <p>Hello World! (And hello Canva!)</p>
-        </div>
-    );
+    return <Tabs />;
 }
 
 export default App;
