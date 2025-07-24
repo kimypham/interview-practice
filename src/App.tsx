@@ -1,10 +1,11 @@
 import './App.css';
+import CanvasEditor from './CanvasEditor';
 
 function App() {
     return (
-        <div className="App">
-            <p>Hello World! (And hello Canva!)</p>
-        </div>
+        // <div className="App">
+        <CanvasEditor />
+        // </div>
     );
 }
 

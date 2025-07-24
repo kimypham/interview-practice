@@ -14,31 +14,9 @@ Before writing any code, your first step is to generate two detailed planning do
 -   **Granularity:** Each step in both plans must be atomic, corresponding to **only a single file or a single function**.
 -   **Confirmation:** Wait for user's confirmation. Do not proceed until the plan is confirmed.
 
----
+## 2. Implementation Phase: Write the Code
 
-## 2. Test-First Development: Write Unit Tests
-
-After both plans are established, you must write unit tests _before_ writing the corresponding implementation code.
-
--   **Action:** For each function or file outlined in the plans, create comprehensive unit tests first.
--   **Naming convention:** All typescript files must have a Jest unit test file associated with it, with the name FileName.test.tsx or FileName.service.test.tsx.
--   **Test structure:**
-    -   Each unit test file must contain a "describe", which has the same name as the file name.
-    -   If it is unit test file for a service file, the unit test should contain one "describe", with one "describe" per each service function inside it.
-    -   Inside each describe, there should be "it" tests with the test name "should [expected outcome] when [condition happens]". the "when..." part can be omitted if unneeded.
-    -   Within tests, please seperate render actions (only if it takes more than 1 line), any actions taken (eg. firing events), and expected results, with a new line in between each of them.
--   **Test coding convention**: Mock functions and values as required. Do not attempt to use real values from API calls etc. Use case sensitivive tests (eg. {name: "Example name"} instead of {name: /example name/i}).
--   **Reference:** Always refer back to both the "implementation plan" and the "test case plan" to ensure your unit tests cover all planned requirements and specific test scenarios.
--   **Frameworks:** Please use Jest.
--   **Confirmation:** Wait for user's confirmation. Only write unit tests and do not proceed with code implementation until the unit tests have been reviewed and confirmed by user.
-
----
-
-## 3. Implementation Phase: Write the Code
-
-With the tests written and failing (as expected), you can now write the implementation code in Typescript.
-
--   **Action:** Write the actual source code for each function, making sure it passes the unit tests you've already written.
+-   **Action:** Write the actual source code for each function
 -   **Code Quality:** The implementation **must be generic and robust**. Do not hard-code values or logic specifically to pass the tests. The code must solve the general problem and handle a variety of inputs, not just the examples defined in the test cases.
 -   **Reference:** Continuously refer to the "implementation plan" to ensure your code aligns with the agreed-upon architecture and logic.
 -   **Completion:** The task is only complete when all unit tests for the feature are passing.
